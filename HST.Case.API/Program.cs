@@ -16,8 +16,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +26,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); ;
 builder.Services.AddScoped<IMailService, MailKitMailService>();
 builder.Services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductManager>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

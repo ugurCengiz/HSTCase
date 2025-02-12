@@ -1,0 +1,18 @@
+﻿@using Core.Entities.DTOs
+@model UserForLoginDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<form method="post" asp-action="Login">
+    <div>
+        <label>Email:</label>
+        <input type="email" asp-for="Email" required />
+    </div>
+    <div>
+        <label>Password:</label>
+        <input type="password" asp-for="Password" required />
+    </div>
+    <button type="submit">Login</button>
+</form>

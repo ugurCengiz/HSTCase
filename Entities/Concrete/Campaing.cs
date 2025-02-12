@@ -4,8 +4,9 @@ namespace Entities.Concrete
 {
     public class Campaing:BaseEntity
     {
-        public string CampaingName { get; set; }
-        public int Price { get; set; }
+        public string Name { get; set; }
+        public decimal MinAmount { get; set; }
+        public decimal MaxAmount { get; set; }
         public int Installment { get; set; }
 
 

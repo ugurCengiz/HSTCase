@@ -14,11 +14,14 @@ namespace DataAccess.Contexts
 
         }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-        //public DbSet<Campaing> Campaings { get; set; }
-        //public DbSet<Card> Cards { get; set; }
-        //public DbSet<Product> Products { get; set; }
-        //public DbSet<BasketItem> basketItems { get; set; }
-        //public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketItem> basketItems { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<Campaing> Campaings { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Product> Products { get; set; }
+       
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
