@@ -7,8 +7,9 @@
         public Order Order { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
+        public string CardNumber { get; set; }
         public string ExpDate { get; set; }
-        public int CVV { get; set; }
+        public string CVV { get; set; }
 
     }
 }

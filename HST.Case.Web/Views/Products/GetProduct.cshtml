@@ -1,0 +1,153 @@
+﻿@using Entities.Concrete
+@model List<Product>
+@{
+    ViewData["Title"] = "GetProduct";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#AddModal">Create</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th> Price</th>
+                <th>Created Date</th>
+                <th>Updated Date</th>
+                <th>Status</th>
+                <th>Transactions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var campaing in Model)
+            {
+                <tr>
+                    <td>@campaing.Id</td>
+                    <td>@campaing.Name</td>
+                    <td>@campaing.Description</td>
+                    <td>@campaing.Price</td>
+                    <th>@campaing.CreatedDate</th>
+                    <th>@campaing.UpdatedDate</th>
+                    <th>@campaing.Status</th>
+                    <th>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateModal" onclick="loadProductData(@campaing.Id, '@campaing.Name','@campaing.Description',@campaing.Price,'@campaing.Status')">Düzenle</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(@campaing.Id)">Sil</button>
+
+                    </th>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="AddModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Products/Add">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" name="Name" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <input type="text" name="Description" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Price</label>
+                        <input type="text" name="Price" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="UpdateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Products/Update">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="updateId" />
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" name="Name" id="updateName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <input type="text" name="Description" id="updateDescription" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Price</label>
+                        <input type="text" name="Price" id="updatePrice" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Durum</label>
+                        <select name="Status" id="updateStatus" class="form-control">
+                            <option value="Active">Active</option>
+                            <option value="Passive">Passive</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+     function loadProductData(id,name,description,price,status) {
+        document.getElementById('updateId').value = id;
+        document.getElementById('updateName').value = name;
+        document.getElementById('updateDescription').value= description
+          document.getElementById('updatePrice').value= price        
+           document.getElementById('updateStatus').value = status;
+
+    }
+
+
+      function deleteProduct(id) {
+        if (confirm("Bu kaydı silmek istediğinize emin misiniz?")) {
+            fetch(`/Products/Delete/${id}`, {
+                method: "Post",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                 alert("Kayıt başarıyla silindi.");
+                   location.reload();
+                }
+
+            })
+
+        }
+    }
+</script>

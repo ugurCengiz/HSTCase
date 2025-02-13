@@ -1,0 +1,46 @@
+﻿@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ödeme Sayfası</h2>
+<h4>Toplam Tutar: @Model.TotalAmount TL</h4>
+
+<form asp-action="Checkout" method="post">
+    <label for="Installment">Ödeme Seçeneği:</label>
+    <select name="Installment" id="Installment" class="form-control">
+        @foreach (var option in Model.AvailableInstallments)
+        {
+            <option value="@option">@(option == 0 ? "Peşin Ödeme" : $"{option} Taksit")</option>
+        }
+    </select>
+   
+    <div class="mb-3">
+        <label>Kart Sahibi Adı</label>
+        <input name="Name" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Kart Sahibi SOYADI</label>
+        <input name="SurName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kart Numarası</label>
+        <input name="CardNumber" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Son Kullanma Tarihi (MM/YY)</label>
+        <input name="ExpDate" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>CVV</label>
+        <input name="CVV" class="form-control" />
+        @* <span asp-validation-for="CVV" class="text-danger"></span> *@
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Siparişi Tamamla</button>
+</form>
+

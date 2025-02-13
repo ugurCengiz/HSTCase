@@ -8,8 +8,8 @@ namespace Entities.Concrete
         public string Email { get; set; }
         public decimal TotalAmount { get; set; }
         public int Installment { get; set; }      
-        public DateTime OrderDate { get; set; }         
-        public Status Status { get; set; }
+        public DateTime OrderDate { get; set; }
+        public Status Status { get; set; } = Status.Active;
         public List<OrderDetail> OrderDetails { get; set; } = new();       
 
      

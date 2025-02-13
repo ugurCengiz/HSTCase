@@ -1,0 +1,162 @@
+﻿@using Entities.Concrete
+@model List<Campaing>
+@{
+    ViewData["Title"] = "GetCampaign";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#AddModal">Create</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ürün Adı</th>
+                <th>Minimum Price</th>
+                <th>Maximum</th>
+                <th>Installment</th>
+                <th>Created Date</th>
+                <th>Updated Date</th>
+                <th>Status</th>
+                <th>Transactions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var campaing in Model)
+            {
+                <tr>
+                    <td>@campaing.Name</td>
+                    <td>@campaing.MinAmount</td>
+                    <td>@campaing.MaxAmount</td>
+                    <td>@campaing.Installment</td>
+                    <th>@campaing.CreatedDate</th>
+                    <th>@campaing.UpdatedDate</th>
+                    <th>@campaing.Status</th>
+                    <th>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateModal" onclick="loadCampaignData(@campaing.Id, '@campaing.Name',@campaing.MinAmount,@campaing.MaxAmount,@campaing.Installment,'@campaing.Status')">Düzenle</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCampaign(@campaing.Id)">Sil</button>
+
+                    </th>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="AddModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Admin/Add">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" name="Name" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Min Amount</label>
+                        <input type="number" name="MinAmount" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Max Amount</label>
+                        <input type="text" name="MaxAmount" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Installment</label>
+                        <input type="number" name="Installment" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="UpdateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Admin/Update">
+                <div class="modal-header">
+                    <h5 class="modal-title">Campaign Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="updateId" />
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" name="Name" id="updateName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Min Amount</label>
+                        <input type="text" name="MinAmount" id="updateMinAmount" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Max Amount</label>
+                        <input type="text" name="MaxAmount" id="updateMaxAmount" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Installment</label>
+                        <input type="number" name="Installment" id="updateInstallment" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Durum</label>
+                        <select name="Status" id="updateStatus" class="form-control">
+                            <option value="Active">Active</option>
+                            <option value="Passive">Passive</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+     function loadCampaignData(id,name,minAmount,maxAmount,installment,status) {
+        document.getElementById('updateId').value = id;
+        document.getElementById('updateName').value = name;
+        document.getElementById('updateMinAmount').value= minAmount
+          document.getElementById('updateMaxAmount').value= maxAmount
+            document.getElementById('updateInstallment').value= installment
+           document.getElementById('updateStatus').value = status;
+
+    }
+
+
+      function deleteCampaign(id) {
+        if (confirm("Bu kaydı silmek istediğinize emin misiniz?")) {
+            fetch(`/Admin/Delete/${id}`, {
+                method: "Post",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                 alert("Kayıt başarıyla silindi.");
+                   location.reload();
+                }
+
+            })
+
+        }
+    }
+</script>

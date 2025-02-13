@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Core.Repositories
@@ -36,7 +37,7 @@ namespace Core.Repositories
             return Context.Set<TEntity>().FirstOrDefault(expression);
         }
 
-        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression)
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
         {
             return await Context.Set<TEntity>().AsQueryable().FirstOrDefaultAsync(expression);
         }
@@ -48,7 +49,7 @@ namespace Core.Repositories
                 : Context.Set<TEntity>().Where(expression).AsNoTracking();
         }
 
-        public async Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> expression = null)
+        public async Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> expression = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
         {
             return expression == null
                 ? await Context.Set<TEntity>().ToListAsync()

@@ -1,19 +1,22 @@
 ﻿using Business.Servies.Abstract;
+using Core.UnitOfWorks;
 using DataAccess.Abstract;
-using DataAccess.Concrete;
 using Entities.Concrete;
-using Org.BouncyCastle.Bcpg;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Business.Servies.Concrete
 {
-    class CampainManager : ICampainService
+    public class CampainManager : ICampainService
     {
         private readonly ICampainRepository _campainRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CampainManager(ICampainRepository campainRepository)
+
+        public CampainManager(ICampainRepository campainRepository, IUnitOfWork unitOfWork)
         {
             _campainRepository = campainRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Campaing?> GetAsync(Expression<Func<Campaing, bool>> predicate)
         {
@@ -30,12 +33,15 @@ namespace Business.Servies.Concrete
         public Campaing Add(Campaing campaing)
         {
             Campaing addedCampaing = _campainRepository.Add(campaing);
+            _unitOfWork.SaveChanges();
             return addedCampaing;
         }
 
         public Campaing Delete(Campaing campaing)
         {
-            _campainRepository.Delete(campaing);
+            campaing.IsDeleted = true;
+            _campainRepository.Update(campaing);
+            _unitOfWork.SaveChanges();
             return campaing;
         }
 
@@ -44,7 +50,17 @@ namespace Business.Servies.Concrete
         public Campaing Update(Campaing campaing)
         {
             Campaing updatedCampain = _campainRepository.Update(campaing);
+            _unitOfWork.SaveChanges();
             return updatedCampain;
+        }
+        public async Task<List<int>> GetAvailableInstallments(decimal totalAmount)
+        {
+            var availableInstallments = await _campainRepository.Query().Where(c => totalAmount >= c.MinAmount && totalAmount <= c.MaxAmount)
+                .Select(c => c.Installment)
+                .ToListAsync();
+            availableInstallments.Insert(0, 0);
+
+            return availableInstallments;
         }
     }
 }

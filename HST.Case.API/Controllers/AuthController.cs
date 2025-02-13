@@ -11,17 +11,12 @@ namespace HST.Case.API.Controllers
     [ApiController]
     public class AuthController : CustomBaseController
     {
-        private readonly IMediator _mediator;
-
-        public AuthController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+     
 
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
         {
-            var result = await _mediator.Send(new LoginCommand
+            var result = await Mediator.Send(new LoginCommand
             {
                 UserForLoginDto = userForLoginDto
             });
@@ -37,7 +32,7 @@ namespace HST.Case.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
         {
-            var result = await _mediator.Send(new RegisterForAdminCommand
+            var result = await Mediator.Send(new RegisterForAdminCommand
             {
                 CreateUserDto = createUserDto
             });

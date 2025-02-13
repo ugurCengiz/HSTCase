@@ -1,23 +1,20 @@
 ﻿using Business.Servies.Abstract;
+using Core.UnitOfWorks;
 using DataAccess.Abstract;
-using DataAccess.Concrete;
 using Entities.Concrete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Servies.Concrete
 {
-    class PaymentManager : IPaymentService
+  public  class PaymentManager : IPaymentService
     {
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentManager(IPaymentRepository paymentRepository)
+        public PaymentManager(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork = null)
         {
             _paymentRepository = paymentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Payment?> GetAsync(Expression<Func<Payment, bool>> predicate)
@@ -34,12 +31,14 @@ namespace Business.Servies.Concrete
         public Payment Add(Payment payment)
         {
             Payment addedPayment = _paymentRepository.Add(payment);
+            _unitOfWork.SaveChanges();
             return addedPayment;
         }
 
         public Payment Delete(Payment payment)
         {
             _paymentRepository.Delete(payment);
+            _unitOfWork.SaveChanges();
             return payment;
         }
 
@@ -48,6 +47,7 @@ namespace Business.Servies.Concrete
         public Payment Update(Payment payment)
         {
             Payment updatedPayment = _paymentRepository.Update(payment);
+            _unitOfWork.SaveChanges();
             return updatedPayment;
         }
     }

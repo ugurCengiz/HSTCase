@@ -7,6 +7,7 @@ namespace Business.Servies.Abstract
     {
         Task<Campaing?> GetAsync(Expression<Func<Campaing, bool>> predicate);
         Task<List<Campaing>?> GetListAsync(Expression<Func<Campaing, bool>>? predicate = null);
+        Task<List<int>> GetAvailableInstallments(decimal totalAmount);
         Campaing Add(Campaing campaing);
         Campaing Update(Campaing campaing);
         Campaing Delete(Campaing campaing);

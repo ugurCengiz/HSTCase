@@ -1,0 +1,42 @@
+﻿@model BasketModel
+
+<div class="container">
+    <h2>Sepetiniz</h2>
+
+    @if (Model.Items.Count == 0)
+    {
+        <p>Sepetiniz boş.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Fiyat</th>
+                    <th>Adet</th>
+                    <th>Toplam</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Price.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        <td>@(item.Quantity * item.Price) TL</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h4>Toplam Tutar: @Model.TotalPrice.ToString("C")</h4>
+        @if (Model.Items.Any())
+        {
+            <a asp-controller="Payments" asp-action="Index" class="btn btn-success">Ödeme Yap</a>
+        }
+    }
+</div>
+
+

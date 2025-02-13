@@ -14,10 +14,13 @@ namespace HST.Case.Web.Controllers
     public class AuthController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(HttpClient httpClient)
+        public AuthController(IConfiguration configuration, HttpClient httpClient = null)
         {
+            _configuration = configuration;
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri(_configuration["ApiUrl"]);
         }
 
         public IActionResult Login()
@@ -32,7 +35,7 @@ namespace HST.Case.Web.Controllers
                 return View(model);
 
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:7196/api/Auth/Login", jsonContent);
+            var response = await _httpClient.PostAsync("api/Auth/Login", jsonContent);
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("", "E-posta veya şifre hatalı.");
@@ -58,7 +61,7 @@ namespace HST.Case.Web.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Admin", "GetCampaign");
          
         }
 

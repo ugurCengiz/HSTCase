@@ -40,7 +40,9 @@ namespace Business.Servies.Concrete
 
         public Product Delete(Product product)
         {
-            _productRepository.Delete(product);
+            product.IsDeleted = true;
+            _productRepository.Update(product);
+            _unitOfWork.SaveChanges();
             return product;
         }
 
@@ -48,7 +50,10 @@ namespace Business.Servies.Concrete
 
         public Product Update(Product product)
         {
+
+
             Product updated = _productRepository.Update(product);
+            _unitOfWork.SaveChanges();
             return updated;
         }
     }

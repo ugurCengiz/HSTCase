@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Business.Servies.Concrete
 {
-    class OrderDetailManager : IOrderDetailService
+   public class OrderDetailManager : IOrderDetailService
     {
         private readonly IOrderDetailRepository _orderDetailRepository;
 

@@ -1,34 +1,97 @@
+using Entities.Concrete;
 using HST.Case.Web.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace HST.Case.Web.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IConfiguration configuration, HttpClient httpClient = null)
         {
-            _logger = logger;
+            _configuration = configuration;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri(_configuration["ApiUrl"]);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            string url = "api/Products/GetList";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
+            string jsonData = await response.Content.ReadAsStringAsync();
+
+            var productList = JsonConvert.DeserializeObject<List<Product>>(jsonData);
+
+            return View(productList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(int productId, string email)
+        {
+            string url = "api/Products/GetList";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
+            string jsonData = await response.Content.ReadAsStringAsync();
+
+            var productList = JsonConvert.DeserializeObject<List<Product>>(jsonData);
+
+            var product = productList.FirstOrDefault(p => p.Id == productId);
+            if (product == null) return NotFound();
+
+            var basket = HttpContext.Session.GetObject<BasketModel>("Basket") ?? new BasketModel();
+
+            if (string.IsNullOrEmpty(basket.Email))
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    TempData["RequireEmail"] = true;
+                    return RedirectToAction("Index");
+                }
+                basket.Email = email;
+            }
+
+            var basketItem = basket.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (basketItem != null)
+            {
+                basketItem.Quantity++;
+            }
+            else
+            {
+                basket.Items.Add(new BasketItemModel
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    Price = product.Price,
+                    Quantity = 1
+                });
+            }
+
+            HttpContext.Session.SetObject("Basket", basket);
+            return RedirectToAction("Index");
         }
 
-        public IActionResult Privacy()
+        public IActionResult Cart()
         {
-            return View();
+            var basket = HttpContext.Session.GetObject<BasketModel>("Basket") ?? new BasketModel();
+            return View(basket);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

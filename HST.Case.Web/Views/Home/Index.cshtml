@@ -1,8 +1,48 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Entities.Concrete
+@model List<Product>
+@{
+    var requireEmail = TempData["RequireEmail"] as bool? ?? false;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <h2>Ürün Listesi</h2>
+    <div style="position: absolute; top: 10px; right: 10px;">
+        <a href="@Url.Action("Cart", "Home")" class="btn btn-primary">
+            🛒 Sepet <span class="badge bg-danger">
+                @(Context.Session.GetObject<BasketModel>("Basket")?.Items.Sum(i => i.Quantity) ?? 0)
+            </span>
+
+        </a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ürün Adı</th>
+                <th>Açıklama</th>
+                <th>Fiyat</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>
+                        <form method="post" action="@Url.Action("AddToCart", "Home")">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            @if (requireEmail)
+                            {
+                                <input type="email" name="email" placeholder="E-posta Giriniz" required />
+                            }
+                            <button type="submit" class="btn btn-success">Sepete Ekle</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

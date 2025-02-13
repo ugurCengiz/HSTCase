@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Business.Servies.Concrete
 {
-    class BasketItemManager : IBasketItemService
+    public class BasketItemManager : IBasketItemService
     {
         private readonly BasketItemRepository _basketItemRepository;
 

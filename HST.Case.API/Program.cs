@@ -1,4 +1,6 @@
 using Business.Features.Auth.Commands.Login;
+using Business.MQ.Consumers;
+using Business.MQ.Producers;
 using Business.Servies.Abstract;
 using Business.Servies.Concrete;
 using Core.Configurations;
@@ -12,12 +14,21 @@ using DataAccess.Abstract;
 using DataAccess.Concrete;
 using DataAccess.Contexts;
 using DataAccess.UnitOfWorks;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -28,6 +39,36 @@ builder.Services.AddScoped<IMailService, MailKitMailService>();
 builder.Services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductManager>();
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IBasketService, BasketManager>();
+//builder.Services.AddScoped<IBasketItemRepository, BasketItemRepository>();
+//builder.Services.AddScoped<IBasketItemService, BasketItemManager>();
+builder.Services.AddScoped<ICampainRepository, CampainRepository>();
+builder.Services.AddScoped<ICampainService, CampainManager>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderManager>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<IOrderDetailService, OrderDetailManager>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentManager>();
+builder.Services.AddScoped<OrderCreatedProcuder>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>();
+
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("amqps://btwnrxzn:S3DNOn1rYfiHAGDYH9_3gL5m4pL5zJnh@fish.rmq.cloudamqp.com/btwnrxzn");
+        cfg.ReceiveEndpoint("order-created-queue", e =>
+        {
+            e.ConfigureConsumer<OrderCreatedConsumer>(context);
+        });
+    });
+});
+
+
 
 
 builder.Services.AddControllers();
