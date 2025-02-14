@@ -1,0 +1,78 @@
+﻿@using Business.Features.Orders.Queries.GetList
+@model List<GetListOrderDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#AddModal">Create</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Total Amount</th>
+                <th> Installment</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Transactions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Email</td>
+                    <td>@order.TotalAmount</td>
+                    <td>@order.Installment</td>
+                    <th>@order.OrderDate</th>
+                    <th>@order.Status</th>
+                    <th>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateModal" onclick="loadOrderData(@order.Id,'@order.Status')">Edit</button>
+
+
+                    </th>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="UpdateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Orders/Update">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="updateId" />
+                    <div class="mb-3">
+                        <label>Durum</label>
+                        <select name="Status" id="updateStatus" class="form-control">
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Received">Received</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadOrderData(id,status) {
+        document.getElementById('updateId').value = id;       
+           document.getElementById('updateStatus').value = status;
+
+    }
+</script>

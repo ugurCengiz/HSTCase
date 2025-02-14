@@ -1,8 +1,8 @@
 ﻿using Core.Entities.Concrete;
 
-namespace Core.Entities.DTOs
+namespace HST.Case.Web.Models
 {
-    public class AppUserDto
+    public class UpdateUserModel
     {
         public string Id { get; set; }
         public string UserName { get; set; }

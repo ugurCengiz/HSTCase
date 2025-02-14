@@ -14,8 +14,7 @@ namespace DataAccess.Contexts
 
         }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-        public DbSet<BasketItem> basketItems { get; set; }
-        public DbSet<Basket> Baskets { get; set; }
+   
         public DbSet<Campaing> Campaings { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -44,13 +43,27 @@ namespace DataAccess.Contexts
             return base.SaveChangesAsync(cancellationToken);
 
         }
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    builder.Entity<BasketItem>()
-        //      .HasOne(x => x.Product)
-        //      .WithMany()
-        //      .HasForeignKey(x => x.ProductId);
-        //}
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker.Entries<BaseEntity>();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(p => p.CreatedDate)
+                        .CurrentValue = DateTime.Now;
+                }
+
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(p => p.UpdatedDate)
+                        .CurrentValue = DateTime.Now;
+                }
+            }
+            return base.SaveChanges();
+        }
+
 
 
     }

@@ -92,6 +92,43 @@ namespace HST.Case.Web.Controllers
             var basket = HttpContext.Session.GetObject<BasketModel>("Basket") ?? new BasketModel();
             return View(basket);
         }
+        [HttpPost]
+        public IActionResult UpdateQuantity(int productId, string action)
+        {
+            var basket = HttpContext.Session.GetObject<BasketModel>("Basket") ?? new BasketModel();
 
+            var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                if (action == "increase")
+                {
+                    item.Quantity++;
+                }
+                else if (action == "decrease" && item.Quantity > 1)
+                {
+                    item.Quantity--;
+                }
+            }
+
+            HttpContext.Session.SetObject("Basket", basket); 
+
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public IActionResult RemoveItem(int productId)
+        {
+            var basket = HttpContext.Session.GetObject<BasketModel>("Basket") ?? new BasketModel();
+
+            var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                basket.Items.Remove(item);
+            }
+
+            HttpContext.Session.SetObject("Basket", basket);  
+
+            return RedirectToAction("Cart");
+        }
     }
 }

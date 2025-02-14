@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using Core.Entities.Concrete;
+using Entities.Enums;
 
 namespace Entities.Concrete
 {
@@ -9,7 +9,7 @@ namespace Entities.Concrete
         public decimal TotalAmount { get; set; }
         public int Installment { get; set; }      
         public DateTime OrderDate { get; set; }
-        public Status Status { get; set; } = Status.Active;
+        public OrderStatus Status { get; set; } =OrderStatus.Received;
         public List<OrderDetail> OrderDetails { get; set; } = new();       
 
      

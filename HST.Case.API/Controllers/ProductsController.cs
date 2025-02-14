@@ -1,10 +1,7 @@
-﻿using Business.Features.Campaigns.Commands.Delete;
-using Business.Features.Campaigns.Commands.Update;
-using Business.Features.Products.Commands.Create;
+﻿using Business.Features.Products.Commands.Create;
 using Business.Features.Products.Commands.Delete;
 using Business.Features.Products.Commands.Update;
 using Business.Features.Products.Queries.GetList;
-using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HST.Case.API.Controllers

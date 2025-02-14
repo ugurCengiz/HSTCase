@@ -1,26 +1,26 @@
 ﻿@using Entities.Concrete
 @model List<Product>
+
 @{
-    var requireEmail = TempData["RequireEmail"] as bool? ?? false;
+    var requireEmail = Context.Session.GetObject<BasketModel>("Basket")?.Email == null;
 }
 
 <div class="container">
-    <h2>Ürün Listesi</h2>
+    <h2>Product List</h2>
     <div style="position: absolute; top: 10px; right: 10px;">
         <a href="@Url.Action("Cart", "Home")" class="btn btn-primary">
-            🛒 Sepet <span class="badge bg-danger">
+            🛒 Basket <span class="badge bg-danger">
                 @(Context.Session.GetObject<BasketModel>("Basket")?.Items.Sum(i => i.Quantity) ?? 0)
             </span>
-
         </a>
     </div>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Ürün Adı</th>
-                <th>Açıklama</th>
-                <th>Fiyat</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
                 <th></th>
             </tr>
         </thead>
@@ -32,17 +32,70 @@
                     <td>@product.Description</td>
                     <td>@product.Price.ToString("C")</td>
                     <td>
-                        <form method="post" action="@Url.Action("AddToCart", "Home")">
-                            <input type="hidden" name="productId" value="@product.Id" />
-                            @if (requireEmail)
-                            {
-                                <input type="email" name="email" placeholder="E-posta Giriniz" required />
-                            }
-                            <button type="submit" class="btn btn-success">Sepete Ekle</button>
-                        </form>
+                        <button class="btn btn-success add-to-cart" data-product-id="@product.Id">Add To Cart</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+
+<div id="emailModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">E-mail Required</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="emailForm">
+                    <div class="mb-3">
+                        <label for="emailInput" class="form-label">E-mail:</label>
+                        <input type="email" id="emailInput" class="form-control" required />
+                    </div>
+                    <input type="hidden" id="selectedProductId" />
+                    <button type="submit" class="btn btn-primary">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".add-to-cart").click(function () {
+                var productId = $(this).data("product-id");
+
+        
+                var basketEmail = "@(Context.Session.GetObject<BasketModel>("Basket")?.Email)";
+                if (!basketEmail || basketEmail === "null") {
+                    $("#selectedProductId").val(productId);
+                    $("#emailModal").modal("show");
+                } else {
+                    addToCart(productId, basketEmail);
+                }
+            });
+
+            $("#emailForm").submit(function (event) {
+                event.preventDefault();
+                var email = $("#emailInput").val();
+                var productId = $("#selectedProductId").val();
+
+              
+                addToCart(productId, email);
+                $("#emailModal").modal("hide");
+            });
+
+            function addToCart(productId, email) {
+                $.post('@Url.Action("AddToCart", "Home")', { productId: productId, email: email }, function (response) {
+                    alert("Product added!");
+                    location.reload();
+                }).fail(function () {
+                    alert("An error occurred while adding the product to the cart!");
+                });
+            }
+        });
+    </script>
+}

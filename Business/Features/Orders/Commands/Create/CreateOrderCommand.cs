@@ -15,13 +15,13 @@ namespace Business.Features.Orders.Commands.Create
         public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int>
         {
             private readonly IOrderService _orderService;
-            private readonly IBasketService _basketService;
+          
             private readonly ICampainService _campainService;
 
-            public CreateOrderCommandHandler(IOrderService orderService, IBasketService basketService = null, ICampainService campainService = null)
+            public CreateOrderCommandHandler(IOrderService orderService, ICampainService campainService )
             {
                 _orderService = orderService;
-                _basketService = basketService;
+             
                 _campainService = campainService;
             }
 
@@ -38,7 +38,7 @@ namespace Business.Features.Orders.Commands.Create
                     TotalAmount = request.Basket.TotalPrice,
                     OrderDate = DateTime.UtcNow,
                     Installment= request.SelectedInstallment,
-                    Status = Status.Active,
+                    Status = Entities.Enums.OrderStatus.Received,
                     OrderDetails = request.Basket.Items.Select(i => new OrderDetail
                     {
                         ProductId = i.ProductId,

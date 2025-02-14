@@ -61,7 +61,7 @@ namespace HST.Case.Web.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return RedirectToAction("Admin", "GetCampaign");
+            return RedirectToAction( "GetCampaign", "Campaings");
          
         }
 

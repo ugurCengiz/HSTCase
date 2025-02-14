@@ -14,8 +14,9 @@
                 <tr>
                     <th>Ürün</th>
                     <th>Fiyat</th>
-                    <th>Adet</th>
-                    <th>Toplam</th>
+                    <th>Miktar</th>
+                    <th>Toplam Tutar</th>
+                    <th>İşlem</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,20 +24,31 @@
                 {
                     <tr>
                         <td>@item.ProductName</td>
-                        <td>@item.Price.ToString("C")</td>
-                        <td>@item.Quantity</td>
-                        <td>@(item.Quantity * item.Price) TL</td>
+                        <td>@item.Price.ToString("C2", System.Globalization.CultureInfo.CreateSpecificCulture("tr-TR"))</td>
+                        <td>
+                            <form asp-action="UpdateQuantity" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" name="action" value="decrease" class="btn btn-warning">-</button>
+                                @item.Quantity
+                                <button type="submit" name="action" value="increase" class="btn btn-success">+</button>
+                            </form>
+                        </td>
+                        <td>@(item.Quantity * item.Price)</td>
+                        <td>
+                            <form asp-action="RemoveItem" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-danger">Sil</button>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
 
-        <h4>Toplam Tutar: @Model.TotalPrice.ToString("C")</h4>
+        <h4>Toplam Tutar: @Model.TotalPrice.ToString("C2", System.Globalization.CultureInfo.CreateSpecificCulture("tr-TR"))</h4>
         @if (Model.Items.Any())
         {
             <a asp-controller="Payments" asp-action="Index" class="btn btn-success">Ödeme Yap</a>
         }
     }
 </div>
-
-

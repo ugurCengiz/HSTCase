@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,6 +26,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var userName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Bilinmiyor";
+                            <a asp-controller="Auth" asp-action="Logout" class="nav-link text-dark">@userName (çıkış yap)</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Login" class="nav-link text-dark">Giriş Yap</a>
+                        }
+
                     </ul>
                 </div>
             </div>

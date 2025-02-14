@@ -1,4 +1,4 @@
-﻿
+﻿@using System.Security.Claims
 @{
     Layout = null;
 }
@@ -25,11 +25,29 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="GetCampaign">Campaing</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Campaings" asp-action="GetCampaign">Campaing</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="GetProduct">Product</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="GetUser">Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Order</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var userName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Bilinmiyor";
+                            <a asp-controller="Auth" asp-action="Logout" class="nav-link text-dark">@userName (çıkış yap)</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Login" class="nav-link text-dark">Giriş Yap</a>
+                        }
+
                     </ul>
                 </div>
             </div>

@@ -1,0 +1,86 @@
+﻿@model List<GetListUsersDto>
+@{
+    ViewData["Title"] = "GetUser";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#AddModal">Create</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Id</th>
+                <th> Name</th>               
+                <th>Email</th>               
+                <th>Status</th>
+                <th>Transactions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Status</td>                 
+                    <th>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#UpdateModal" onclick="loadUserData('@user.Id', '@user.UserName','@user.Email','@user.Status')">Edit</button>                      
+
+                    </th>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="UpdateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/Users/Update">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="updateId" />
+                    <div class="mb-3">
+                        <label>User Name</label>
+                        <input type="text" name="UserName" id="updateUserName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>EMail</label>
+                        <input type="text" name="Email" id="updateEmail" class="form-control" required />
+                    </div>                    
+                  
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="Status" id="updateStatus" class="form-control">
+                            <option value="Active">Active</option>
+                            <option value="Passive">Passive</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+     function loadUserData(id,userName,email,status) {
+        document.getElementById('updateId').value = id;
+        document.getElementById('updateUserName').value = userName;
+        document.getElementById('updateEmail').value= email;        
+           document.getElementById('updateStatus').value = status;
+
+    }
+    
+</script>
+

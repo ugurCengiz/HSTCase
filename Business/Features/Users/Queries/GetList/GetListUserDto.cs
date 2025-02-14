@@ -1,8 +1,8 @@
 ﻿using Core.Entities.Concrete;
 
-namespace Core.Entities.DTOs
+namespace Business.Features.Users.Queries.GetList
 {
-    public class AppUserDto
+   public class GetListUserDto
     {
         public string Id { get; set; }
         public string UserName { get; set; }
